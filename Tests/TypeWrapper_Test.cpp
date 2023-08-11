@@ -138,8 +138,6 @@ TEST_CASE("TypeWrappers can be assigned", "[TypeWrapper]") {
     }
 
     SECTION("Message field Assigned with other field") {
-        Simple::Level2* expected = new Simple::Level2();
-        expected->set_str(string_embedded_expected);
         const auto* field_descriptor = descriptor->FindFieldByName("embedded");
 
         easy::TypeWrapper wrapper(&simple, field_descriptor);
@@ -151,8 +149,6 @@ TEST_CASE("TypeWrappers can be assigned", "[TypeWrapper]") {
     }
 
     SECTION("Int Repeated field Assigned") {
-        Simple::Level2* expected = new Simple::Level2();
-        expected->set_str(string_embedded_expected);
         const auto* field_descriptor = descriptor->FindFieldByName("integers");
 
         easy::TypeWrapper wrapper(&simple, field_descriptor);
@@ -170,6 +166,23 @@ TEST_CASE("TypeWrappers can be assigned", "[TypeWrapper]") {
         for (int i = 0; i < value.size(); ++i) {
             REQUIRE(value.Get(i) == integers_expected[i]);
         }
+    }
 
+    SECTION("Int Repeated field Assigned with std::vector<int>") {
+        const auto* field_descriptor = descriptor->FindFieldByName("integers");
+
+        easy::TypeWrapper wrapper(&simple, field_descriptor);
+
+        google::protobuf::MutableRepeatedFieldRef<int> value = wrapper;
+
+        CHECK(value.size() == 0);
+
+        wrapper = integers_expected;
+
+        CHECK(value.size() == integers_expected.size());
+
+        for (int i = 0; i < value.size(); ++i) {
+            REQUIRE(value.Get(i) == integers_expected[i]);
+        }
     }
 }

@@ -19,6 +19,17 @@ namespace easy {
         return descriptor_->type();
     }
 
+    bool TypeWrapper::Contains(const std::string& id) const
+    {
+        if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE)
+            return false;
+
+        const auto* message_descriptor = message_->GetDescriptor();
+        const auto* field_descriptor = message_descriptor->FindFieldByName(id);
+
+        return field_descriptor;
+    }
+
     static bool IsNumericType(google::protobuf::FieldDescriptor::Type type)
     {
         using Type = google::protobuf::FieldDescriptor::Type;

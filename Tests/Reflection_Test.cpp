@@ -24,7 +24,7 @@ TEST_CASE("Reflection find field can be casted", "[Reflection]") {
         REQUIRE_THAT(value, Catch::Matchers::WithinRel(double_expected, 0.001));
     }
 
-    SECTION("First level double") {
+    SECTION("First level int") {
         int32_t value = reflection["int"];
         REQUIRE(value == integer_expected);
     }
@@ -41,6 +41,7 @@ TEST_CASE("Reflection find field can be assigned", "[Reflection]") {
     double double_expected = 1.4;
     std::string string_expected = "expected ;)";
     std::string string_embedded_expected = "expected x2 ;)";
+    std::vector<int> integers_expected = { 1, 2, 3 };
 
     Simple simple;
     simple.set_decimal(0);
@@ -77,5 +78,20 @@ TEST_CASE("Reflection find field can be assigned", "[Reflection]") {
     SECTION("Second level string field Assigned with int") {
         auto e = [&]() { reflection["embedded"]["str"] = 1; };
         REQUIRE_THROWS(e());
+    }
+
+    SECTION("First level repeated int field Assigned std::vector<int>") {
+        reflection["integers"] = integers_expected;
+        google::protobuf::RepeatedFieldRef<int> repeated = reflection["integers"];
+
+        CHECK(repeated.size() == integers_expected.size());
+
+        for (int i = 0; i < repeated.size(); ++i) {
+            REQUIRE(repeated.Get(i) == integers_expected[i]);
+        }
+
+        for (int i = 0; i < simple.integers().size(); ++i) {
+            REQUIRE(simple.integers().at(i) == integers_expected[i]);
+        }
     }
 }
