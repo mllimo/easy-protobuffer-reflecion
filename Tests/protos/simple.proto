@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message Simple {
+
+  message Level2 {
+	  string str = 1;
+  }
+
+  string str = 1;
+  int32 int = 2;
+  double decimal = 3;
+  Level2 embedded = 4;
+}

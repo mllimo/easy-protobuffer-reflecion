@@ -1,0 +1,7 @@
+[requires]
+protobuf/3.21.12
+catch2/3.4.0
+
+[generators]
+CMakeDeps
+CMakeToolchain
