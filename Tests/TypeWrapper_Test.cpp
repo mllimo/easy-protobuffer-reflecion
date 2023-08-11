@@ -11,13 +11,17 @@ TEST_CASE("TypeWrappers can be casted", "[TypeWrapper]") {
     double double_expected = 1.4;
     std::string string_expected = "expected ;)";
     std::string string_embedded_expected = "expected x2 ;)";
-
+    std::vector<int> integers_expected = { 1, 2, 3 };
 
     Simple simple;
     simple.set_decimal(double_expected);
     simple.set_int_(integer_expected);
     simple.set_str(string_expected);
+    simple.add_integers(1);
+    simple.add_integers(2);
+    simple.add_integers(3);
     simple.mutable_embedded()->set_str(string_embedded_expected);
+
 
     const auto* descriptor = simple.GetDescriptor();
 
@@ -58,6 +62,25 @@ TEST_CASE("TypeWrappers can be casted", "[TypeWrapper]") {
         REQUIRE(casted->str() == string_embedded_expected);
     }
 
+    SECTION("repeated int to repeated int") {
+        const auto* field_descriptor = descriptor->FindFieldByName("integers");
+        easy::TypeWrapper wrapper(&simple, field_descriptor);
+        google::protobuf::RepeatedFieldRef<int32_t> value = wrapper;
+
+        CHECK(value.size()  == integers_expected.size());
+        
+        for (int i = 0; i < value.size(); ++i) {
+            REQUIRE(value.Get(i) == integers_expected.at(i));
+        }
+    }
+
+    SECTION("repeated int to other type") {
+        const auto* field_descriptor = descriptor->FindFieldByName("integers");
+        easy::TypeWrapper wrapper(&simple, field_descriptor);
+        auto e = [&]() {google::protobuf::RepeatedFieldRef<float> value = wrapper; };
+        REQUIRE_THROWS(e());
+    }
+
 }
 
 TEST_CASE("TypeWrappers can be assigned", "[TypeWrapper]") {
@@ -66,6 +89,7 @@ TEST_CASE("TypeWrappers can be assigned", "[TypeWrapper]") {
     double double_expected = 1.4;
     std::string string_expected = "expected ;)";
     std::string string_embedded_expected = "expected x2 ;)";
+    std::vector<int> integers_expected = { 1, 2, 3 };
 
     Simple simple;
     simple.set_decimal(0);
@@ -124,5 +148,28 @@ TEST_CASE("TypeWrappers can be assigned", "[TypeWrapper]") {
         std::string value = wrapper["embedded"]["str"];
 
         REQUIRE(value == string_embedded_expected);
+    }
+
+    SECTION("Int Repeated field Assigned") {
+        Simple::Level2* expected = new Simple::Level2();
+        expected->set_str(string_embedded_expected);
+        const auto* field_descriptor = descriptor->FindFieldByName("integers");
+
+        easy::TypeWrapper wrapper(&simple, field_descriptor);
+   
+        google::protobuf::MutableRepeatedFieldRef<int> value = wrapper;
+
+        CHECK(value.size() == 0);
+
+        for (int i = 0; i < (int)integers_expected.size(); ++i) {
+            value.Add(integers_expected[i]);
+        }
+
+        CHECK(value.size() == integers_expected.size());
+
+        for (int i = 0; i < value.size(); ++i) {
+            REQUIRE(value.Get(i) == integers_expected[i]);
+        }
+
     }
 }

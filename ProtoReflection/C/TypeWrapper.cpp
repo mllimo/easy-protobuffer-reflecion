@@ -41,21 +41,21 @@ namespace easy {
         return it != KCheck.end();
     }
 
-    TypeWrapper::operator double()
+    TypeWrapper::operator double() const
     {
         if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE)
             throw std::bad_cast();
         return reflection_->GetDouble(*message_, descriptor_);
     }
 
-    TypeWrapper::operator int32_t()
+    TypeWrapper::operator int32_t() const
     {
         if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_INT32)
             throw std::bad_cast();
         return reflection_->GetInt32(*message_, descriptor_);
     }
 
-    TypeWrapper::operator const std::string& ()
+    TypeWrapper::operator const std::string& () const
     {
         if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_STRING)
             throw std::bad_cast();

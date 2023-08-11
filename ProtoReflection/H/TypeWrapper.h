@@ -4,6 +4,8 @@
 
 #include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
+#include <google/protobuf/reflection.h>
+#include <google/protobuf/repeated_field.h>
 
 #include <ProtoReflection_api.h>
 
@@ -19,10 +21,12 @@ namespace easy {
 
         google::protobuf::FieldDescriptor::Type Type() const;
 
-        operator double();
-        operator int32_t();
-        operator const std::string& ();
+        operator double() const;
+        operator int32_t() const;
+        operator const std::string& () const;
         operator google::protobuf::Message* ();
+        template <typename T> operator google::protobuf::MutableRepeatedFieldRef<T>();
+        template <typename T> operator google::protobuf::RepeatedFieldRef<T>() const;
 
         TypeWrapper& operator=(TypeWrapper&&) = default;
         TypeWrapper& operator=(double);
@@ -49,4 +53,16 @@ namespace easy {
         const google::protobuf::FieldDescriptor* descriptor_;
         const google::protobuf::Reflection* reflection_;
     };
+
+    template <typename T>
+    TypeWrapper::operator google::protobuf::MutableRepeatedFieldRef<T>()
+    {
+        return reflection_->GetMutableRepeatedFieldRef<T>(message_, descriptor_);
+    }
+
+    template <typename T> 
+    TypeWrapper::operator google::protobuf::RepeatedFieldRef<T>() const
+    {
+        return reflection_->GetRepeatedFieldRef<T>(*message_, descriptor_);
+    }
 }

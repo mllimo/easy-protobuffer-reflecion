@@ -10,4 +10,5 @@ message Simple {
   int32 int = 2;
   double decimal = 3;
   Level2 embedded = 4;
+  repeated int32 integers = 5;
 }
