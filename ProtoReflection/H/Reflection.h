@@ -13,7 +13,7 @@ namespace easy {
 
         bool Contains(const std::string& id) const;
 
-        TypeWrapper operator[](const std::string& id);
+        TypeWrapper At(const std::string& id);
 
     private:
         google::protobuf::Message* message_;

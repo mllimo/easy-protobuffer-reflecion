@@ -20,17 +20,17 @@ TEST_CASE("Reflection find field can be casted", "[Reflection]") {
     easy::Reflection reflection(&simple);
 
     SECTION("First level double") {
-        double value = reflection["decimal"];
+        double value = reflection.At("decimal");
         REQUIRE_THAT(value, Catch::Matchers::WithinRel(double_expected, 0.001));
     }
 
     SECTION("First level int") {
-        int32_t value = reflection["int"];
+        int32_t value = reflection.At("int");
         REQUIRE(value == integer_expected);
     }
 
     SECTION("First level string") {
-        std::string value = reflection["str"];
+        std::string value = reflection.At("str");
         REQUIRE(value == string_expected);
     }
 }
@@ -52,37 +52,37 @@ TEST_CASE("Reflection find field can be assigned", "[Reflection]") {
     easy::Reflection reflection(&simple);
 
     SECTION("First level Double field Assigned with double") {
-        reflection["decimal"] = double_expected;
-        double value = reflection["decimal"];
+        reflection.At("decimal") = double_expected;
+        double value = reflection.At("decimal");
         REQUIRE_THAT(value, Catch::Matchers::WithinRel(double_expected, 0.001));
     }
 
     SECTION("First level field Assigned with int32") {
-        reflection["int"] = integer_expected;
-        int32_t value = reflection["int"];
+        reflection.At("int") = integer_expected;
+        int32_t value = reflection.At("int");
         REQUIRE(value == integer_expected);
     }
 
     SECTION("First level field Assigned with string") {
-        reflection["str"] = string_expected;
-        std::string value = reflection["str"];
+        reflection.At("str") = string_expected;
+        std::string value = reflection.At("str");
         REQUIRE(value == string_expected);
     }
 
     SECTION("Second level string field Assigned with string") {
-        reflection["embedded"]["str"] = string_expected;
-        std::string value = reflection["str"];
+        reflection.At("embedded").At("str") = string_expected;
+        std::string value = reflection.At("str");
         REQUIRE(value == string_expected);
     }
 
     SECTION("Second level string field Assigned with int") {
-        auto e = [&]() { reflection["embedded"]["str"] = 1; };
+        auto e = [&]() { reflection.At("embedded").At("str") = 1; };
         REQUIRE_THROWS(e());
     }
 
     SECTION("First level repeated int field Assigned std::vector<int>") {
-        reflection["integers"] = integers_expected;
-        google::protobuf::RepeatedFieldRef<int> repeated = reflection["integers"];
+        reflection.At("integers") = integers_expected;
+        google::protobuf::RepeatedFieldRef<int> repeated = reflection.At("integers");
 
         CHECK(repeated.size() == integers_expected.size());
 

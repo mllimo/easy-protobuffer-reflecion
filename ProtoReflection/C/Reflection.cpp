@@ -16,7 +16,7 @@ namespace easy {
     }
 
 
-    TypeWrapper Reflection::operator[](const std::string& id)
+    TypeWrapper Reflection::At(const std::string& id)
     {
         const auto* message_descriptor = message_->GetDescriptor();
         const auto* field_descriptor = message_descriptor->FindFieldByName(id);

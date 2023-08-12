@@ -207,7 +207,7 @@ namespace easy {
         return *this;
     }
 
-    TypeWrapper TypeWrapper::operator[](const std::string& id)
+    TypeWrapper TypeWrapper::At(const std::string& id)
     {
         if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE)
             throw std::bad_typeid();
@@ -220,7 +220,7 @@ namespace easy {
         const auto* message_reflection = message_->GetReflection();
         
         return field_descriptor->type() == google::protobuf::FieldDescriptor::Type::TYPE_MESSAGE
-            ? TypeWrapper(reflection_->MutableMessage(message_, descriptor_), field_descriptor)
+            ? TypeWrapper(message_reflection->MutableMessage(message_, descriptor_), field_descriptor)
             : TypeWrapper(message_, field_descriptor);
     }
 

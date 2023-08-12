@@ -141,9 +141,8 @@ TEST_CASE("TypeWrappers can be assigned", "[TypeWrapper]") {
         const auto* field_descriptor = descriptor->FindFieldByName("embedded");
 
         easy::TypeWrapper wrapper(&simple, field_descriptor);
-        wrapper["embedded"]["str"] = string_embedded_expected;
-
-        std::string value = wrapper["embedded"]["str"];
+        wrapper.At("embedded").At("str") = string_embedded_expected;
+        std::string value = wrapper.At("embedded").At("str");
 
         REQUIRE(value == string_embedded_expected);
     }

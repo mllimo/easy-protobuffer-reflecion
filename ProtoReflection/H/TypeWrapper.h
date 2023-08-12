@@ -71,7 +71,7 @@ namespace easy {
         /**
          * Given a string, this function attempts to match a field and returns a TypeWrapper for that field.
          */
-        TypeWrapper operator[](const std::string& id);
+        TypeWrapper At(const std::string& id);
 
     private:
         google::protobuf::Message* message_;
