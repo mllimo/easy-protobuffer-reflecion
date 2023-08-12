@@ -52,6 +52,13 @@ namespace easy {
         return it != KCheck.end();
     }
 
+    TypeWrapper::operator float() const
+    {
+        if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_FLOAT)
+            throw std::bad_cast();
+        return reflection_->GetFloat(*message_, descriptor_);
+    }
+
     TypeWrapper::operator double() const
     {
         if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_DOUBLE)
@@ -61,9 +68,39 @@ namespace easy {
 
     TypeWrapper::operator int32_t() const
     {
-        if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_INT32)
+        if (descriptor_->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT32)
+            return reflection_->GetInt32(*message_, descriptor_);
+        if (descriptor_->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
+            throw std::bad_typeid();
+        return reflection_->GetEnumValue(*message_, descriptor_);
+    }
+
+    TypeWrapper::operator int64_t() const
+    {
+        if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_INT64)
             throw std::bad_cast();
-        return reflection_->GetInt32(*message_, descriptor_);
+        return reflection_->GetInt64(*message_, descriptor_);
+    }
+
+    TypeWrapper::operator uint32_t() const
+    {
+        if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_UINT32)
+            throw std::bad_cast();
+        return reflection_->GetUInt32(*message_, descriptor_);
+    }
+
+    TypeWrapper::operator uint64_t() const
+    {
+        if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_UINT64)
+            throw std::bad_cast();
+        return reflection_->GetUInt64(*message_, descriptor_);
+    }
+
+    TypeWrapper::operator bool() const
+    {
+        if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_BOOL)
+            throw std::bad_cast();
+        return reflection_->GetBool(*message_, descriptor_);
     }
 
     TypeWrapper::operator const std::string& () const
@@ -80,6 +117,13 @@ namespace easy {
         return reflection_->MutableMessage(message_, descriptor_);
     }
 
+    TypeWrapper& TypeWrapper::operator=(float value)
+    {
+        if (not IsNumericType(descriptor_->type()))
+            throw std::bad_typeid();
+        reflection_->SetFloat(message_, descriptor_, value);
+        return *this;
+    }
 
     TypeWrapper& TypeWrapper::operator=(double value)
     {
@@ -94,6 +138,43 @@ namespace easy {
         if (not IsNumericType(descriptor_->type()))
             throw std::bad_typeid();
         reflection_->SetInt32(message_, descriptor_, value);
+        return *this;
+    }
+
+    TypeWrapper& TypeWrapper::operator=(int64_t value)
+    {
+        if (not IsNumericType(descriptor_->type()))
+            throw std::bad_typeid();
+        reflection_->SetInt64(message_, descriptor_, value);
+        return *this;
+    }
+
+    TypeWrapper& TypeWrapper::operator=(uint32_t value)
+    {
+        if (not IsNumericType(descriptor_->type()) || descriptor_->type() == google::protobuf::FieldDescriptor::Type::TYPE_ENUM)
+            throw std::bad_typeid();
+        
+        if (descriptor_->type() == google::protobuf::FieldDescriptor::Type::TYPE_INT32)
+            reflection_->SetUInt32(message_, descriptor_, value);
+        else
+            reflection_->SetEnumValue(message_, descriptor_, value);
+
+        return *this;
+    }
+
+    TypeWrapper& TypeWrapper::operator=(uint64_t value)
+    {
+        if (not IsNumericType(descriptor_->type()))
+            throw std::bad_typeid();
+        reflection_->SetUInt64(message_, descriptor_, value);
+        return *this;
+    }
+
+    TypeWrapper& TypeWrapper::operator=(bool value)
+    {
+        if (descriptor_->type() != google::protobuf::FieldDescriptor::Type::TYPE_BOOL)
+            throw std::bad_typeid();
+        reflection_->SetBool(message_, descriptor_, value);
         return *this;
     }
 

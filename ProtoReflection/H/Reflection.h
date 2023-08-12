@@ -10,6 +10,9 @@ namespace easy {
     class PROTOREFLECTION_EXPORT Reflection {
     public:
         Reflection(google::protobuf::Message* message);
+
+        bool Contains(const std::string& id) const;
+
         TypeWrapper operator[](const std::string& id);
 
     private:

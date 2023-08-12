@@ -7,6 +7,15 @@ namespace easy {
         assert(message_);
     }
 
+    bool Reflection::Contains(const std::string& id) const
+    {
+        const auto* message_descriptor = message_->GetDescriptor();
+        const auto* field_descriptor = message_descriptor->FindFieldByName(id);
+
+        return field_descriptor;
+    }
+
+
     TypeWrapper Reflection::operator[](const std::string& id)
     {
         const auto* message_descriptor = message_->GetDescriptor();

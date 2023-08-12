@@ -22,16 +22,27 @@ namespace easy {
         google::protobuf::FieldDescriptor::Type Type() const;
         bool Contains(const std::string& id) const;
 
+        operator float() const;
         operator double() const;
         operator int32_t() const;
+        operator int64_t() const;
+        operator uint32_t() const;
+        operator uint64_t() const;
+        operator bool() const;
         operator const std::string& () const;
         operator google::protobuf::Message* ();
         template <typename T> operator google::protobuf::MutableRepeatedFieldRef<T>();
         template <typename T> operator google::protobuf::RepeatedFieldRef<T>() const;
 
         TypeWrapper& operator=(TypeWrapper&&) = default;
+        TypeWrapper& operator=(float);
         TypeWrapper& operator=(double);
         TypeWrapper& operator=(int32_t);
+        TypeWrapper& operator=(int64_t);
+        TypeWrapper& operator=(uint32_t);
+        TypeWrapper& operator=(uint64_t);
+        TypeWrapper& operator=(bool);
+
 
         /**
          * Use the move operator to do a copyless assignment. Otherwise the function will make a copy.
